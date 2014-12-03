@@ -14,12 +14,12 @@ int[] rightDown = new int[0];
 
 void setup(){
   
-  frameRate(30);
+  frameRate(2);
   kinect = new SimpleOpenNI(this);
   kinect.enableDepth();
-  kinect.enableRGB();
+  //kinect.enableRGB();
   //kinect.enableIR();
-  size(kinect.depthWidth(),kinect.depthHeight());
+  //size(kinect.depthWidth(),kinect.depthHeight());
     
 }
 
@@ -29,7 +29,7 @@ void draw(){
   //noLoop();
   //background(0);
   //image(kinect.depthImage(),0,0);
-  image(kinect.rgbImage(),0,0);
+  //image(kinect.rgbImage(),0,0);
 
   left = new int[0];
   center = new int[0];
@@ -60,7 +60,7 @@ void createSubsectors() {
 
 void createSectors() {
   int[] depthValues = kinect.depthMap();
-  for(int i = 0; i < depthValues.length; i += 640) {
+  for(int i = 0; i < depthValues.length; i += (640*4)) {
      left = combine(left, Arrays.copyOfRange(depthValues, 0 + i, 213 + i));
      center = combine(center, Arrays.copyOfRange(depthValues, 0 + i + 213, 213 + i + 214));
      right = combine(right, Arrays.copyOfRange(depthValues, 0 + i+213+214, 213 + i+213+214));
@@ -71,12 +71,17 @@ void createSectors() {
 
 void drawSectors() {
   //println("left: " + checkNearestPoint(left) + " right: " + checkNearestPoint(right));
-  drawLeftUp(getDistanceStrength(checkNearestPoint(leftUp)));
-  drawLeftDown(getDistanceStrength(checkNearestPoint(leftDown)));
-  drawCenterUp(getDistanceStrength(checkNearestPoint(centerUp)));
-  drawCenterDown(getDistanceStrength(checkNearestPoint(centerDown)));
-  drawRightUp(getDistanceStrength(checkNearestPoint(rightUp)));
-  drawRightDown(getDistanceStrength(checkNearestPoint(rightDown)));
+  //drawLeftUp(getDistanceStrength(checkNearestPoint(leftUp)));
+  //drawLeftDown(getDistanceStrength(checkNearestPoint(leftDown)));
+  //drawCenterUp(getDistanceStrength(checkNearestPoint(centerUp)));
+  //drawCenterDown(getDistanceStrength(checkNearestPoint(centerDown)));
+  //drawRightUp(getDistanceStrength(checkNearestPoint(rightUp)));
+  //drawRightDown(getDistanceStrength(checkNearestPoint(rightDown)));
+  
+  println("Min points of sectors: \n"+
+    getDistanceStrength(checkNearestPoint(leftUp))+" "+getDistanceStrength(checkNearestPoint(centerUp))+" "+getDistanceStrength(checkNearestPoint(rightUp))+"\n"+
+    getDistanceStrength(checkNearestPoint(leftDown))+" "+getDistanceStrength(checkNearestPoint(centerDown))+" "+getDistanceStrength(checkNearestPoint(rightDown))
+  );
   
 }
 
@@ -92,39 +97,39 @@ int getDistanceStrength(int distance) {
 }
 
 void drawLeftUp(int opa) {
-  fill(255, 0, 0, opa);
-  rect(0, 0 , 213, 240);
+ //fill(255, 0, 0, opa);
+ //rect(0, 0 , 213, 240);
 }
 
 void drawLeftDown(int opa) {
-  fill(255, 0, 0, opa);
-  rect(0, 240 , 213, 240);
+ //fill(255, 0, 0, opa);
+ //rect(0, 240 , 213, 240);
 }
 
 void drawCenterUp(int opa) {
-  fill(255, 0, 0, opa);
-  rect(213, 0 ,  214, 240);
+ //fill(255, 0, 0, opa);
+ //rect(213, 0 ,  214, 240);
 }
 
 void drawCenterDown(int opa) {
-  fill(255, 0, 0, opa);
-  rect(213, 240 , 214, 240);
+ //fill(255, 0, 0, opa);
+ //rect(213, 240 , 214, 240);
 }
 
 void drawRightUp(int opa) {
-  fill(255, 0, 0, opa);
-  rect(427, 0 , 213, 240);
+ //fill(255, 0, 0, opa);
+ //rect(427, 0 , 213, 240);
 }
 
 void drawRightDown(int opa) {
-  fill(255, 0, 0, opa);
-  rect(427, 240, 213, 240);
+ //fill(255, 0, 0, opa);
+ //rect(427, 240, 213, 240);
 }
 
 
 int checkNearestPoint(int[] arr) {
   int lowestPoint = 8000;
-    for(int i = 0; i < arr.length; i+=8) {
+    for(int i = 0; i < arr.length; i+=4) {
     if(arr[i] < lowestPoint && arr[i] > 200) {
       lowestPoint = arr[i];
     }
@@ -137,7 +142,7 @@ int checkNearestPoint(int[] arr) {
     if(arr[i+3] < lowestPoint && arr[i+3] > 200) {
       lowestPoint = arr[i+3];
     }
-    if(arr[i+4] < lowestPoint && arr[i+4] > 200) {
+    /*if(arr[i+4] < lowestPoint && arr[i+4] > 200) {
       lowestPoint = arr[i+4];
     }
     if(arr[i+5] < lowestPoint && arr[i+5] > 200) {
@@ -148,7 +153,7 @@ int checkNearestPoint(int[] arr) {
     }
     if(arr[i+7] < lowestPoint && arr[i+7] > 200) {
       lowestPoint = arr[i+7];
-    }
+    }*/
   }
   return lowestPoint;
 }
