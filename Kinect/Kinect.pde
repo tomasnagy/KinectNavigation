@@ -4,11 +4,17 @@ SimpleOpenNI kinect;
 int[] left = new int[0];
 int[] center = new int[0];
 int[] right = new int[0];
+int[] leftUp = new int[0];
+int[] leftDown = new int[0];
+int[] centerUp = new int[0];
+int[] centerDown = new int[0];
+int[] rightUp = new int[0];
+int[] rightDown = new int[0];
 
 
 void setup(){
   
-  frameRate(10);
+  frameRate(30);
   kinect = new SimpleOpenNI(this);
   kinect.enableDepth();
   kinect.enableRGB();
@@ -28,11 +34,28 @@ void draw(){
   left = new int[0];
   center = new int[0];
   right = new int[0];
+  leftUp = new int[0];
+  leftDown = new int[0];
+  centerUp = new int[0];
+  centerDown = new int[0];
+  rightUp = new int[0];
+  rightDown = new int[0];
+  
 
   createSectors();
+  createSubsectors();
   //image(kinect.irImage(),0,0);
   drawSectors();
 
+}
+
+void createSubsectors() {
+  leftUp = Arrays.copyOfRange(left, 0, left.length/2);
+  leftDown = Arrays.copyOfRange(left, left.length/2, left.length);
+  centerUp = Arrays.copyOfRange(center, 0, center.length/2);
+  centerDown = Arrays.copyOfRange(center, center.length/2, center.length);
+  rightUp = Arrays.copyOfRange(right, 0, right.length/2);
+  rightDown = Arrays.copyOfRange(right, right.length/2, right.length);
 }
 
 void createSectors() {
@@ -43,43 +66,88 @@ void createSectors() {
      right = combine(right, Arrays.copyOfRange(depthValues, 0 + i+213+214, 213 + i+213+214));
   }
   
-  println(left.length + center.length + right.length);
+  //println(left.length + center.length + right.length);
 }
 
 void drawSectors() {
-  println("left: " + checkNearestPoint(left) + " right: " + checkNearestPoint(right));
-  drawLeftSector(checkNearestPoint(left));
-  drawRightSector(checkNearestPoint(right));
+  //println("left: " + checkNearestPoint(left) + " right: " + checkNearestPoint(right));
+  drawLeftUp(getDistanceStrength(checkNearestPoint(leftUp)));
+  drawLeftDown(getDistanceStrength(checkNearestPoint(leftDown)));
+  drawCenterUp(getDistanceStrength(checkNearestPoint(centerUp)));
+  drawCenterDown(getDistanceStrength(checkNearestPoint(centerDown)));
+  drawRightUp(getDistanceStrength(checkNearestPoint(rightUp)));
+  drawRightDown(getDistanceStrength(checkNearestPoint(rightDown)));
   
 }
 
-void drawLeftSector(int  depth) {
-  if(depth < 1100 && depth > 750) {
-    fill(255, 0, 0, 125);
-    rect(0, 0, 213, 640);
-  } else if( depth < 750) {
-    fill(255, 0, 0);
-    rect(0, 0, 213, 640);
+int getDistanceStrength(int distance) {
+  int result =(int)Math.floor(map(distance, 500, 1100, 255, 0));
+  if(result < 0) {
+    return 0;
+  } else if (result > 255) {
+    return 255;
+  } else {
+    return result;
   }
-  
 }
 
-void drawRightSector(int  depth) {
-  if(depth < 1100 && depth > 750) {
-    fill(255, 0, 0, 125);
-    rect(427, 0, 480, 640);
-  } else if( depth < 750) {
-    fill(255, 0, 0);
-     rect(427, 0, 480, 640);
-  }
-  
+void drawLeftUp(int opa) {
+  fill(255, 0, 0, opa);
+  rect(0, 0 , 213, 240);
 }
+
+void drawLeftDown(int opa) {
+  fill(255, 0, 0, opa);
+  rect(0, 240 , 213, 240);
+}
+
+void drawCenterUp(int opa) {
+  fill(255, 0, 0, opa);
+  rect(213, 0 ,  214, 240);
+}
+
+void drawCenterDown(int opa) {
+  fill(255, 0, 0, opa);
+  rect(213, 240 , 214, 240);
+}
+
+void drawRightUp(int opa) {
+  fill(255, 0, 0, opa);
+  rect(427, 0 , 213, 240);
+}
+
+void drawRightDown(int opa) {
+  fill(255, 0, 0, opa);
+  rect(427, 240, 213, 240);
+}
+
 
 int checkNearestPoint(int[] arr) {
   int lowestPoint = 8000;
-  for(int i = 0; i < arr.length; i++) {
+    for(int i = 0; i < arr.length; i+=8) {
     if(arr[i] < lowestPoint && arr[i] > 200) {
       lowestPoint = arr[i];
+    }
+    if(arr[i+1] < lowestPoint && arr[i+1] > 200) {
+      lowestPoint = arr[i+1];
+    }
+    if(arr[i+2] < lowestPoint && arr[i+2] > 200) {
+      lowestPoint = arr[i+2];
+    }
+    if(arr[i+3] < lowestPoint && arr[i+3] > 200) {
+      lowestPoint = arr[i+3];
+    }
+    if(arr[i+4] < lowestPoint && arr[i+4] > 200) {
+      lowestPoint = arr[i+4];
+    }
+    if(arr[i+5] < lowestPoint && arr[i+5] > 200) {
+      lowestPoint = arr[i+5];
+    }
+    if(arr[i+6] < lowestPoint && arr[i+6] > 200) {
+      lowestPoint = arr[i+6];
+    }
+    if(arr[i+7] < lowestPoint && arr[i+7] > 200) {
+      lowestPoint = arr[i+7];
     }
   }
   return lowestPoint;
